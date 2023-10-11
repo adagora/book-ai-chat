@@ -7,6 +7,7 @@ const { Client } = pkg;
 import { Bard } from "googlebard";
 
 const client = new Client({
+  connectionString: process.env.POSTGRES_URL,
   user: process.env.POSTGRES_USER,
   host: process.env.POSTGRES_HOST,
   database: process.env.POSTGRES_DB,
