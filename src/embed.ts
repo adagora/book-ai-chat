@@ -1,13 +1,15 @@
 const { PDFLoader } = require("langchain/document_loaders/fs/pdf");
-require("dotenv").config();
-const { Client } = require("pg");
+import dotenv from "dotenv";
+dotenv.config();
+import pkg from "pg";
+const { Client } = pkg;
 
 const client = new Client({
   user: process.env.POSTGRES_USER,
   host: process.env.POSTGRES_HOST,
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASS,
-  port: process.env.POSTGRES_PORT,
+  port: Number(process.env.POSTGRES_PORT),
 });
 
 client.connect();
@@ -18,6 +20,7 @@ const load = async () => {
   const pdfLoader = new PDFLoader(pdfPath);
   const pdfs = await pdfLoader.load();
 
+  console.log("pdfs");
   let postRes;
   for (const doc of pdfs) {
     const query = `
