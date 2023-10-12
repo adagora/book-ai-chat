@@ -4,6 +4,9 @@
   "description": "this application is using bard-ai to generate points based on a prompt, bard is free",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "build": "rimraf ./build && tsc",
     "lint": "eslint . --ext .ts",
