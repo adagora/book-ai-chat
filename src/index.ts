@@ -75,7 +75,7 @@ app.post(
 
       const resp = {
         ask: input,
-        answer: parseResponse(parseResponse(completionRes)),
+        answer: parseResponse(completionRes),
       };
 
       res.send(resp);
