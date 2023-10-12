@@ -32,7 +32,7 @@ const cookies = `__Secure-1PSID=${COOKIES}`;
 let bardai = new Bard(cookies);
 
 let numberOfRequests = 0;
-const PORT = 3000;
+const PORT = process.env.PORT || 9001;
 
 app.post(
   "/api/chat/completions",
@@ -86,6 +86,4 @@ app.post(
   }
 );
 
-app.listen(PORT, () => {
-  console.log(`listening on port http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`listening to port ${PORT}`));
