@@ -5,6 +5,8 @@ dotenv.config();
 import pkg from "pg";
 const { Client } = pkg;
 import { Bard } from "googlebard";
+import cors from "cors";
+import { parseResponse } from "./helper.js";
 
 const client = new Client({
   connectionString: process.env.POSTGRES_URL,
@@ -16,7 +18,8 @@ const client = new Client({
 });
 
 client.connect();
-app.use(express.json());
+
+app.use(express.json(), cors());
 
 // Visit https://bard.google.com/.
 // Open the browser console by pressing F12.
@@ -58,28 +61,22 @@ app.post(
 
       const rows = resPkg.rows;
 
-      // const rows = [
-      //   {
-      //     content: "The quick brown fox jumps over the lazy dog.",
-      //   },
-      // ];
-
       const completionRes = await bardai.ask(`
-        You are teacher who assists users with understanding a pdf. Answer the user's questions only using the context's opinion. If you are unsure of the answer, tell the user you dont know.
+        Jesteś nauczycielem, który pomaga użytkownikom zrozumieć plik PDF. Odpowiadaj na pytania użytkownika wyłącznie na podstawie opini kontekstowej. Jeśli nie jesteś pewien odpowiedzi, jako asystent powiedz użytkownikowi, że definitywnie nie znasz odpowiedzi.
 
-    context's opinion: """
+    opinia kontekstowa: """
     ${rows.map(({ content }: any) => content)}
     """
 
-    user: ${input}
+    użytkownik: ${input}
 
-    assistant:
+    asystent:
      `);
-      console.log("#################################################");
 
-      console.log("completionRes", completionRes);
-
-      const resp = completionRes;
+      const resp = {
+        ask: input,
+        answer: parseResponse(parseResponse(completionRes)),
+      };
 
       res.send(resp);
     } catch (err) {

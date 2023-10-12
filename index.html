@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pWyborczyTalk</title>
+
+    <!-- https://tailwindcss.com/docs/installation/play-cdn -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      html,
+      body {
+        font-family: Quicksand, ui-sans-serif, system-ui, -apple-system,
+          BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,
+          sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,
+          Noto Color Emoji;
+        background-color: #16244f;
+        color: #ffffff;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+        text-rendering: geometricPrecision;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .text-gradient {
+        background: linear-gradient(
+          to right,
+          #007bff,
+          #00c2ff
+        );
+        -webkit-background-clip: text;
+        color: transparent;
+        display: inline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="flex flex-col items-center justify-center h-screen pt-5">
+      <div class="flex justify-center flex-wrap">
+        <div class="text-5xl text-white">pwyborczy</div>
+        <div class="text-5xl">
+          <span class="text-gradient"><b>Talk</b></span>
+        </div>
+      </div>
+      <div class="max-w-md mt-5 pt-5">
+        <div class="pb-2">Zadaj pytanie wyborcze konfederacji?</div>
+        <form onsubmit="event.preventDefault(); handleRequest()">
+			<div class="flex w-full">
+          <textarea
+            id="inputText"
+            class="w-full p-2 border-none rounded-xl mb-2"
+            placeholder="Twoje pytanie"
+            style="color: black"
+            autofocus
+            minlength="5"
+            required
+          ></textarea>
+		  </div>
+		  <div class="flex justify-center">
+          <button id="button" style="background-color: rgb(86 0 255/1);" class="hover:bg-blue-700 text-white font-medium text-sm py-2 px-4 rounded-xl min-w-150" type="submit">
+            Zapytaj
+          </button>
+		  </div>
+        </form>
+        <div
+          id="response"
+          class="text-center mt-5 max-h-96 overflow-y-scroll panel p-5 space-y-5 rounded-xl add-this-class"
+          style="background-color: rgba(11, 19, 43, 1)"
+        ></div>
+      </div>
+	  <div id="photo-container" class="flex flex-col items-center text-align max-w-md mt-5 pt-5">
+        <img src="photo.jpeg" alt="A photo" style="max-width: 60%; height: auto; border-radius: 10px;" />
+	  </div>
+      <footer class="text-center mt-auto mb-2">
+        <a
+          href="https://konfederacja.pl/app/uploads/Konfederacja_WiN_Program_2023.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          >program wyborczy konfederacja 2023</a
+        >
+        | asystent: bard |
+        <a href="https://twitter.com/AdrianGra1" target="_blank" rel="noopener noreferrer">X</a>
+      </footer>
+    </div>
+    </div>
+
+    <script>
+      const button = document.getElementById("button");
+      const inputText = document.getElementById("inputText");
+      const responseDiv = document.getElementById("response");
+	  const photoContainer = document.getElementById("photo-container");
+      responseDiv.style.display = "none";
+
+      inputText.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          button.click();
+        }
+      });
+
+      function handleRequest() {
+        const button = document.getElementById("button");
+        const inputText = document.getElementById("inputText");
+        const responseDiv = document.getElementById("response");
+
+        const inputValue = inputText.value;
+
+        button.textContent = "...";
+        button.disabled = true;
+
+        fetch("http://localhost:3000/api/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            input: inputValue,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+
+			photoContainer.style.display = "none";
+            button.textContent = "Zapytaj";
+            button.disabled = false;
+            responseDiv.style.display = "block";
+            responseDiv.innerHTML = "";
+
+			// sometimes returns "pl" as answer
+			if (data.answer === "pl") {
+              responseDiv.innerHTML += `<div class="text-left pl-2"><span class="font-bold"></span> Nie znam odpowiedzi.</div>`;
+            } else {
+				responseDiv.innerHTML = `<div class="text-left pl-2"><span class="font-bold">Pytanie: </span> ${data.ask}</div>`;
+				responseDiv.innerHTML += `<div class="text-left pl-2"><span class="font-bold"></span> ${data.answer}</div>`;
+			}
+
+            inputText.value = "";
+
+          })
+          .catch((error) => {
+			photoContainer.style.display = "block";
+            button.textContent = "Spróbuj ponownie";
+            button.disabled = false;
+
+            console.error("API request failed:", error);
+
+            if (error.message.includes("5")) {
+              alert("Server is not running");
+            }
+
+            responseDiv.textContent = "API request failed.";
+          });
+      }
+
+    </script>
+  </body>
+</html>
