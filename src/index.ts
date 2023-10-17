@@ -62,15 +62,15 @@ app.post(
       const rows = resPkg.rows;
 
       const completionRes = await bardai.ask(`
-        Jesteś nauczycielem, który pomaga użytkownikom zrozumieć plik PDF. Odpowiadaj na pytania użytkownika wyłącznie na podstawie opini kontekstowej. Jeśli nie jesteś pewien odpowiedzi, jako asystent powiedz użytkownikowi, że definitywnie nie znasz odpowiedzi.
+        You are teacher who assists users with understanding a pdf. Answer the user's questions only using the context's opinion. If you are unsure of the answer, tell the user you dont know.
 
-    opinia kontekstowa: """
+    context's opinion: """
     ${rows.map(({ content }: any) => content)}
     """
 
-    użytkownik: ${input}
+    user: ${input}
 
-    asystent:
+    assistant:
      `);
 
       const resp = {
