@@ -29,8 +29,7 @@ const load = async () => {
       $2
   `;
 
-    console.log("doc", doc);
-    postRes = await client.query(query, [doc.pageContent, doc.metadata]);
+    await client.query(query, [doc.pageContent, doc.metadata]);
   }
   console.log(`succesfully inserted ${pdfs.length} page embeddings.`);
 };

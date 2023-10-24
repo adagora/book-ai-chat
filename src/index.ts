@@ -61,8 +61,10 @@ app.post(
 
       const rows = resPkg.rows;
 
-      const completionRes = await bardai.ask(`
-        You are teacher who assists users with understanding a pdf. Answer the user's questions only using the context's opinion. If you are unsure of the answer, tell the user you dont know.
+      const completionRes = await bardai
+        .ask(
+          `
+        You are teacher who assists users with understanding a pdf. Answer the user's questions only using the context's opinion. If you are unsure of the answer, tell the user you don not know.
 
     context's opinion: """
     ${rows.map(({ content }: any) => content)}
@@ -71,7 +73,15 @@ app.post(
     user: ${input}
 
     assistant:
-     `);
+     `
+        )
+        .catch(() => {
+          const resp = {
+            ask: input,
+            answer: "Something happened with Bard.",
+          };
+          res.send(resp);
+        });
 
       const resp = {
         ask: input,
