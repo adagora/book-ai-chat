@@ -25,11 +25,17 @@ app.use(express.json(), cors());
 // Open the browser console by pressing F12.
 // Go to the "Application" tab.
 // Under "Cookies", find the cookie named __Secure-1PSID or __Secure-3PSID.
+// find the cookie named __Secure-1PSIDCC or __Secure-3PSIDCC.
+// find the cookie named __Secure-1PSIDTS or __Secure-3PSIDTS.
 // Copy the value of the cookie, which will be your session value.
-const COOKIES = process.env.BARD_COOKIES;
+const GOOGLEBARD_1PSID = process.env.GOOGLEBARD_1PSID;
+const GOOGLEBARD_1PSIDCC = process.env.GOOGLEBARD_1PSIDCC;
+const GOOGLEBARD_1PSIDTS = process.env.GOOGLEBARD_1PSIDTS;
 
-const cookies = `__Secure-1PSID=${COOKIES}`;
-let bardai = new Bard(cookies);
+const GOOGLEBARD_COOKIES =
+  GOOGLEBARD_1PSID + "; " + GOOGLEBARD_1PSIDCC + "; " + GOOGLEBARD_1PSIDTS;
+
+let bardai = new Bard(GOOGLEBARD_COOKIES);
 
 let numberOfRequests = 0;
 const PORT = process.env.PORT || 9001;
