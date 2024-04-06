@@ -56,14 +56,13 @@ app.post(
 
       const resPkg = await client.query(query, [input]);
       const rows = resPkg.rows;
-
       const completion = await openai.chat.completions
         .create({
           messages: [
             {
               role: "system",
-              content: `You are teacher who assists users with understanding a pdf. Answer the user's questions only using the context's opinion. If you are unsure of the answer, tell the user you dont know.
-  
+              content: `You are a highly skilled AI trained in language comprehension and summarization who assists users with understanding a pdf. I would like you to answer the user's questions only using the context's opinion, and summarize it into a concise abstract paragraph. If you are unsure of the answer, tell the user you don't know. Aim to retain the most important points, providing a coherent and readable summary that could help a person understand the main points of the discussion without needing to read the entire text. Please avoid unnecessary details or tangential points.
+
               context's opinion: """
               ${rows.map(({ content }) => content)}
               """
